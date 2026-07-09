@@ -1,177 +1,119 @@
-/* Construit toute la page à partir de l'objet CONFIG.
-   Appelée au chargement, puis re-appelée par admin.js à chaque
-   modification pour rafraîchir l'aperçu instantanément. */
-function renderSite(CONFIG) {
-
-    document.title = CONFIG.nomBoutique;
-
-    // Couleurs -> variables CSS
-    const root = document.documentElement.style;
-    root.setProperty('--vert', CONFIG.couleurs.vert);
-    root.setProperty('--vert-clair', CONFIG.couleurs.vertClair);
-    root.setProperty('--or', CONFIG.couleurs.or);
-    root.setProperty('--or-pale', CONFIG.couleurs.orPale);
-    root.setProperty('--creme', CONFIG.couleurs.creme);
-    root.setProperty('--texte', CONFIG.couleurs.texte);
-
-    const produitOptions = CONFIG.produits.map(p => `<option>${p.nom}</option>`).join('\n');
-
-    const produitsHTML = CONFIG.produits.map(p => `
-    <div class="product-card">
-      <div class="product-thumb">
-        <img src="${p.photo}" alt="${p.nom}" loading="lazy" />
-      </div>
-      <div class="product-info">
-        <h3>${p.nom}</h3>
-        <p>${p.description}</p>
-        <span class="product-tag">${p.tag}</span>
-      </div>
-    </div>
-  `).join('');
-
-    const galerieHTML = CONFIG.galerie.map((url, i) => `
-    <div class="galerie-item${i === 0 ? ' grand' : ''}">
-      <img src="${url}" alt="Photo boutique ${i + 1}" loading="lazy" />
-    </div>
-  `).join('');
-
-    const whatsappLien = CONFIG.lienWhatsApp ?
-        `<a href="${CONFIG.lienWhatsApp}" target="_blank">${CONFIG.whatsapp}</a>` :
-        `<span>${CONFIG.whatsapp}</span>`;
-
-    const sociauxHTML = (CONFIG.lienFacebook || CONFIG.lienWhatsApp) ? `
-    <div class="footer-socials">
-      ${CONFIG.lienFacebook ? `<a href="${CONFIG.lienFacebook}" target="_blank">📘 Facebook</a>` : ''}
-      ${CONFIG.lienWhatsApp ? `<a href="${CONFIG.lienWhatsApp}" target="_blank">📱 WhatsApp</a>` : ''}
-      <a href="mailto:${CONFIG.email}">📧 Email</a>
-    </div>` : '';
-
-  const site = document.getElementById('site');
-  site.innerHTML = `
-<nav>
-  <div class="nav-logo">🌿 ${CONFIG.nomBoutique}</div>
-  <ul class="nav-links">
-    <li><a href="#produits">Produits</a></li>
-    <li><a href="#galerie">Galerie</a></li>
-    <li><a href="#apropos">À propos</a></li>
-    <li><a href="#contact">Commande</a></li>
-  </ul>
-</nav>
-
-<div class="hero">
-  <div class="hero-bg" style="background-image:url('${CONFIG.photHero}')"></div>
-  <div class="hero-content">
-    <span class="hero-badge">✦ ${CONFIG.sloganCourt}</span>
-    <h1>${CONFIG.nomBoutique} — <span>produits naturels</span> du terroir</h1>
-    <p>${CONFIG.descriptionHero}</p>
-    <a href="#contact" class="btn-primary">Passer une commande</a>
-  </div>
-</div>
-
-<section id="produits">
-  <div class="section-label">Notre Sélection</div>
-  <h2>Nos Produits</h2>
-  <p class="intro-text">Chaque produit est soigneusement sélectionné pour vous offrir le meilleur de la nature et du terroir local.</p>
-  <div class="products-grid">${produitsHTML}</div>
-</section>
-
-<section id="galerie">
-  <div class="section-label">Nos Photos</div>
-  <h2>La Vie de Notre Boutique</h2>
-  <div class="galerie-grid">${galerieHTML}</div>
-</section>
-
-<section id="apropos">
-  <div class="apropos-photo">
-    <img src="${CONFIG.aproposPhoto}" alt="Notre équipe" />
-  </div>
-  <div class="apropos-text">
-    <div class="section-label">Notre Histoire</div>
-    <h2>Un commerce ancré dans la nature</h2>
-    <p>${CONFIG.aproposTexte1}</p>
-    <p>${CONFIG.aproposTexte2}</p>
-    <div class="valeurs">
-      <div class="valeur-item"><strong>🌱 Naturel</strong><span>Sans additifs ni produits chimiques</span></div>
-      <div class="valeur-item"><strong>🤝 Confiance</strong><span>Transparence sur l'origine</span></div>
-      <div class="valeur-item"><strong>💚 Qualité</strong><span>Sélection rigoureuse</span></div>
-      <div class="valeur-item"><strong>🚀 Livraison</strong><span>Rapide et soignée</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="contact">
-  <div class="section-label">Commandes & Questions</div>
-  <h2>Contactez-Nous</h2>
-  <div class="contact-grid">
-    <div class="contact-info">
-      <p>Remplissez le formulaire pour passer une commande ou poser une question. Nous vous répondrons dans les 24 heures.</p>
-      <div class="contact-item">
-        <div class="contact-icon">📧</div>
-        <div><strong>Email</strong><a href="mailto:${CONFIG.email}">${CONFIG.email}</a></div>
-      </div>
-      <div class="contact-item">
-        <div class="contact-icon">📱</div>
-        <div><strong>WhatsApp / Téléphone</strong>${whatsappLien}</div>
-      </div>
-      <div class="contact-item">
-        <div class="contact-icon">📍</div>
-        <div><strong>Localisation</strong><span>${CONFIG.ville}</span></div>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <h3>Formulaire de Commande</h3>
-      <div class="form-row">
-        <div class="form-group"><label for="prenom">Prénom *</label><input type="text" id="prenom" placeholder="Votre prénom" /></div>
-        <div class="form-group"><label for="nom">Nom *</label><input type="text" id="nom" placeholder="Votre nom" /></div>
-      </div>
-      <div class="form-group"><label for="email">Adresse email *</label><input type="email" id="email" placeholder="votremail@exemple.com" /></div>
-      <div class="form-group"><label for="telephone">Téléphone / WhatsApp</label><input type="tel" id="telephone" placeholder="+XXX XX XX XX XX" /></div>
-      <div class="form-group">
-        <label for="produit">Produit souhaité *</label>
-        <select id="produit"><option value="">-- Choisir un produit --</option>${produitOptions}<option>Plusieurs produits</option></select>
-      </div>
-      <div class="form-group"><label for="message">Détails de la commande *</label><textarea id="message" placeholder="Décrivez votre commande : quantité, taille (pour vêtements), questions..."></textarea></div>
-      <button class="btn-submit" onclick="envoyerCommande()">📩 Envoyer ma Commande</button>
-      <div class="success-msg" id="successMsg">✅ Merci ! Votre commande a bien été reçue. Nous vous contactons très bientôt.</div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p><strong>🌿 ${CONFIG.nomBoutique}</strong> &nbsp;|&nbsp; ${CONFIG.sloganCourt}</p>
-  <p style="margin-top:.5rem;">📧 <a href="mailto:${CONFIG.email}">${CONFIG.email}</a> &nbsp;|&nbsp; 📱 ${CONFIG.whatsapp}</p>
-  ${sociauxHTML}
-  <p style="margin-top:1.5rem; font-size:.75rem; opacity:.45;">© 2026 ${CONFIG.nomBoutique} — Tous droits réservés</p>
-</footer>
-`;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --vert: #2D5016;
+  --vert-clair: #4A7C2A;
+  --or: #C8922A;
+  --or-pale: #F5E6C8;
+  --creme: #FAF7F0;
+  --texte: #1C1C1C;
+  --terre: #8B4513;
+  --gris: #6B6B6B;
+  --blanc: #FFFFFF;
 }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--creme); color: var(--texte); line-height: 1.6; }
 
-function envoyerCommande() {
-  const prenom = document.getElementById('prenom').value.trim();
-  const nom = document.getElementById('nom').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const produit = document.getElementById('produit').value;
-  const message = document.getElementById('message').value.trim();
+/* NAV */
+nav { position: sticky; top: 0; z-index: 100; background: var(--vert); display: flex; justify-content: space-between; align-items: center; padding: 0 6vw; height: 64px; }
+.nav-logo { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--or-pale); letter-spacing: 1px; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--or-pale); text-decoration: none; font-size: .9rem; font-weight: 500; opacity: .85; transition: opacity .2s; }
+.nav-links a:hover { opacity: 1; }
 
-  if (!prenom || !nom || !email || !produit || !message) {
-    alert("⚠️ Veuillez remplir tous les champs obligatoires (*) avant d'envoyer.");
-    return;
-  }
+/* HERO */
+.hero { position: relative; min-height: 560px; display: flex; align-items: center; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(.42); }
+.hero-content { position: relative; z-index: 1; padding: 80px 6vw; max-width: 660px; }
+.hero-badge { display: inline-block; background: var(--or); color: #fff; font-size: .75rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 14px; border-radius: 2px; margin-bottom: 1.2rem; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 3.8rem); color: #fff; line-height: 1.15; margin-bottom: 1.2rem; }
+.hero h1 span { color: var(--or-pale); }
+.hero p { color: rgba(255,255,255,.85); font-size: 1.05rem; margin-bottom: 2rem; }
+.btn-primary { display: inline-block; background: var(--or); color: #fff; text-decoration: none; padding: 14px 32px; border-radius: 3px; font-weight: 600; font-size: .95rem; transition: background .2s, transform .15s; cursor:pointer; border:none; }
+.btn-primary:hover { background: #a87520; transform: translateY(-2px); }
 
-  const sujet = encodeURIComponent(`Commande – ${produit} – ${prenom} ${nom}`);
-  const corps = encodeURIComponent(
-    `Bonjour,\n\nNom : ${prenom} ${nom}\nEmail : ${email}\nProduit : ${produit}\n\nMessage :\n${message}\n\nCordialement,\n${prenom}`
-  );
+/* SECTIONS */
+section { padding: 80px 6vw; }
+.section-label { font-size: .75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--or); margin-bottom: .6rem; }
+h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: var(--vert); line-height: 1.2; margin-bottom: 1rem; }
+.intro-text { color: var(--gris); max-width: 580px; margin-bottom: 3rem; }
 
-  window.location.href = `mailto:${window.CONFIG.email}?subject=${sujet}&body=${corps}`;
+/* PRODUITS */
+#produits { background: var(--blanc); }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.8rem; }
+.product-card { background: var(--creme); border-radius: 10px; overflow: hidden; border: 1px solid #e8e0d0; transition: transform .2s, box-shadow .2s; }
+.product-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,.12); }
+.product-thumb { height: 200px; overflow: hidden; }
+.product-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.product-card:hover .product-thumb img { transform: scale(1.07); }
+.product-info { padding: 1.4rem; }
+.product-info h3 { font-size: 1.05rem; font-weight: 600; color: var(--vert); margin-bottom: .4rem; }
+.product-info p { font-size: .85rem; color: var(--gris); line-height: 1.5; }
+.product-tag { display: inline-block; margin-top: .8rem; background: var(--or-pale); color: var(--terre); font-size: .72rem; font-weight: 600; letter-spacing: .8px; padding: 3px 10px; border-radius: 20px; }
 
-  document.getElementById('successMsg').style.display = 'block';
-  ['prenom', 'nom', 'email', 'telephone', 'produit', 'message'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = '';
-  });
-  setTimeout(() => { document.getElementById('successMsg').style.display = 'none'; }, 8000);
+/* GALERIE */
+#galerie { background: var(--vert); padding: 70px 6vw; }
+#galerie .section-label { color: rgba(255,220,150,.7); }
+#galerie h2 { color: var(--or-pale); margin-bottom: 2.5rem; }
+.galerie-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 240px 240px; gap: 12px; }
+.galerie-item { overflow: hidden; border-radius: 8px; }
+.galerie-item.grand { grid-row: 1 / 3; }
+.galerie-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; display:block; }
+.galerie-item:hover img { transform: scale(1.05); }
+
+/* À PROPOS */
+#apropos { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; background: var(--creme); }
+.apropos-photo { border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,.15); }
+.apropos-photo img { width: 100%; height: 400px; object-fit: cover; display: block; }
+.apropos-text p { color: var(--gris); margin-bottom: 1rem; }
+.valeurs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+.valeur-item { background: var(--blanc); border-radius: 6px; padding: 1rem; border-left: 3px solid var(--or); }
+.valeur-item strong { display: block; color: var(--vert); font-size: .9rem; margin-bottom: .3rem; }
+.valeur-item span { color: var(--gris); font-size: .82rem; }
+
+/* CONTACT */
+#contact { background: var(--blanc); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; }
+.contact-info > p { color: var(--gris); margin-bottom: 2rem; }
+.contact-item { display: flex; align-items: flex-start; gap: .9rem; margin-bottom: 1.4rem; }
+.contact-icon { width: 42px; height: 42px; background: var(--vert); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.contact-item strong { display: block; font-size: .85rem; color: var(--vert); }
+.contact-item span { font-size: .85rem; color: var(--gris); }
+.contact-item a { font-size: .85rem; color: var(--vert); text-decoration: none; }
+.contact-item a:hover { text-decoration: underline; }
+
+/* FORMULAIRE */
+.form-card { background: var(--creme); border-radius: 12px; padding: 2.5rem; border: 1px solid #e5ddd0; box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+.form-card h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--vert); margin-bottom: 1.5rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; font-size: .82rem; font-weight: 600; color: var(--vert); margin-bottom: .4rem; }
+input, select, textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #d8d0c0; border-radius: 5px; font-family: 'Inter', sans-serif; font-size: .9rem; color: var(--texte); background: var(--blanc); transition: border-color .2s; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--vert-clair); }
+textarea { resize: vertical; min-height: 110px; }
+.btn-submit { width: 100%; padding: 14px; background: var(--vert); color: #fff; border: none; border-radius: 5px; font-family: 'Inter', sans-serif; font-size: .95rem; font-weight: 600; cursor: pointer; transition: background .2s; margin-top: .5rem; }
+.btn-submit:hover { background: var(--vert-clair); }
+.success-msg { display: none; background: #e8f5e0; border: 1px solid #7bc67e; color: #2d5016; padding: 12px 16px; border-radius: 5px; font-size: .9rem; margin-top: 1rem; text-align: center; }
+
+/* FOOTER */
+footer { background: #111; color: rgba(255,255,255,.6); padding: 40px 6vw; text-align: center; font-size: .85rem; }
+footer strong { color: var(--or); }
+footer a { color: rgba(255,255,255,.5); text-decoration: none; }
+footer a:hover { color: var(--or); }
+.footer-socials { margin-top: 1rem; display: flex; justify-content: center; gap: 1.2rem; }
+.footer-socials a { color: rgba(255,255,255,.4); font-size: .8rem; transition: color .2s; }
+.footer-socials a:hover { color: var(--or); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .galerie-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .galerie-item.grand { grid-row: auto; }
+  #apropos { grid-template-columns: 1fr; gap: 2.5rem; }
+  .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .form-row { grid-template-columns: 1fr; }
 }
-
-document.addEventListener('DOMContentLoaded', () => renderSite(window.CONFIG));
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .galerie-grid { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: 1fr; }
+  .valeurs { grid-template-columns: 1fr; }
+}
