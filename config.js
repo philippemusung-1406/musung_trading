@@ -23,7 +23,7 @@ window.CONFIG = {
             nom: "Gingembre en Poudre",
             description: "Gingembre pur, séché et moulu naturellement. Idéal pour cuisiner et se soigner.",
             tag: "Épice Naturelle",
-            photo: "https://images.unsplash.com/photo-1615485500704-8e3b5905a30f?w=600&q=80",
+            photo: "\\Users\\KETSIA TSHILIKA\\Pictures\\IMG-20260701-WA0001.jpg",
         },
         {
             nom: "Thé Gingembre Citronnelle",
