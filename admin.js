@@ -10,7 +10,7 @@
      ce fichier sur GitHub (voir le README).
    ═══════════════════════════════════════════════════════════ */
 
-const ADMIN_PASSWORD = "musung2026"; // ✏️ changez ce mot de passe
+const ADMIN_PASSWORD = "manuella1406"; // ✏️ changez ce mot de passe
 
 let workingConfig = null; // copie de travail de CONFIG pendant l'édition
 
@@ -18,7 +18,7 @@ function initAdmin() {
     // Bouton flottant
     const btn = document.createElement('button');
     btn.id = 'admin-toggle-btn';
-    btn.innerHTML = '✏️ Modifier le site';
+    btn.innerHTML = '✏️ admin';
     btn.onclick = openLogin;
     document.body.appendChild(btn);
 
